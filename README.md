@@ -1,5 +1,6 @@
 # wykaz_p
 -- English will follow --
+
 Wykaz przejsc wspinaczkowych
 
 Pierwszy projekt na kursie "Back-end developer" Reaktor PWN.

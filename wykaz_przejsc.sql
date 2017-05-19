@@ -307,7 +307,7 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `wykaz_p`;
-INSERT INTO `wykaz_p`.`user` (`user_id`, `username`, `email`, `password`, `create_time`, `uprawnienia`) VALUES (1, 'rafal', 'rafal@rafal.pl', 'abc111', '2016-08-21', 011);
+INSERT INTO `wykaz_p`.`user` (`user_id`, `username`, `email`, `password`, `create_time`, `uprawnienia`) VALUES (1, 'rafal', 'rafal_slomka@poczta.onet.pl', 'abc111', '2016-08-21', 011);
 INSERT INTO `wykaz_p`.`user` (`user_id`, `username`, `email`, `password`, `create_time`, `uprawnienia`) VALUES (2, 'tester', 'aaa@b.pl', 'abc', '2016-01-01', 011);
 INSERT INTO `wykaz_p`.`user` (`user_id`, `username`, `email`, `password`, `create_time`, `uprawnienia`) VALUES (3, 'tester2', 'bbb@b.pl', 'abc', '2016-01-01', 011);
 
@@ -319,7 +319,7 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `wykaz_p`;
-INSERT INTO `wykaz_p`.`wspinacz` (`wspinacz_id`, `imie`, `nazwisko`, `ksywa`, `data_ur`, `plec`, `kraj`, `miasto`, `wzrost`, `waga`, `od_kiedy`) VALUES (1, 'Rafał', 'Rafał', 'Rafał', '1984-08-21', 'M', 'Polska', 'Warszawa', 188, 75, '2009-05-01');
+INSERT INTO `wykaz_p`.`wspinacz` (`wspinacz_id`, `imie`, `nazwisko`, `ksywa`, `data_ur`, `plec`, `kraj`, `miasto`, `wzrost`, `waga`, `od_kiedy`) VALUES (1, 'Rafał', 'Słomka', 'Rafał', '1984-08-21', 'M', 'Polska', 'Warszawa', 188, 75, '2009-05-01');
 INSERT INTO `wykaz_p`.`wspinacz` (`wspinacz_id`, `imie`, `nazwisko`, `ksywa`, `data_ur`, `plec`, `kraj`, `miasto`, `wzrost`, `waga`, `od_kiedy`) VALUES (2, 'Testerka', 'Nazwisko_t', 'Testereczka', '1990-07-22', 'K', 'Polska', 'Kraków', 168, 66, '2008-01-01');
 INSERT INTO `wykaz_p`.`wspinacz` (`wspinacz_id`, `imie`, `nazwisko`, `ksywa`, `data_ur`, `plec`, `kraj`, `miasto`, `wzrost`, `waga`, `od_kiedy`) VALUES (3, 'Tester', 'Nazwisko_t', 'Testerek', '1980-12-12', 'M', 'Niemcy', 'Berlin', 175, 71, '2016-01-01');
 
@@ -549,14 +549,14 @@ left join przejscia_p using (droga_p_id)
 left join wspinacz on przejscia_p.wspinacz_id_p = wspinacz.wspinacz_id
 group by przejscia_p.wspinacz_id_p;
 #To nie działa
-select wspinacz.imie, wspinacz.nazwisko, droga_p.nazwa_drogi_p as 'Droga', max(droga_p.wycena_p) as 'Wycena', sciana.nazwa_sciany as 'Ściana', kraj.nazwa_kraju as 'Kraj' 
+select wspinacz.wspinacz_id, wspinacz.imie, wspinacz.nazwisko, droga_p.nazwa_drogi_p as 'Droga', max(droga_p.wycena_p) as 'Wycena', sciana.nazwa_sciany as 'Ściana', kraj.nazwa_kraju as 'Kraj' 
 from przejscia_p
 left join wspinacz on przejscia_p.wspinacz_id_p = wspinacz.wspinacz_id
-natural left join droga_p
+left join droga_p on droga_p.droga_p_id = przejscia_p.droga_p_id
 natural left join sciana
 natural left join miasto
 natural left join kraj
-group by przejscia_p.wspinacz_id_p;
+group by wspinacz.wspinacz_id;
 
 #Średnia trudność dróg, jakie przeszedł dany wspinacz
 select wspinacz.imie, wspinacz.nazwisko, round(avg(droga_p.wycena_p)) as 'Średnia wycena' from droga_p 

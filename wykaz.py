@@ -2,35 +2,47 @@
 import pymysql
 
 class Db:
-    'Logowanie i przyznawanie uprawnień'
+    'Login and access control'
+    __i = 2 
     def __init__(self):
         self.login()
-        self.polacz()        
+        self.connect()
+        self.access()
     
     def login(self):
-        login = input('Podja login: ')
-        haslo = input('Podaj hasło: ')
-        
+        self.login = input('Podaj login: ')
+        self.password = input('Podaj hasło: ')  
     
-    def polacz(self):
+    def connect(self):
         try:
-            self.conn = pymysql.connect('localhost', login, haslo, 'wykaz_p')      
-            self.c = self.conn.cursor()
-            self.dostep()
+            Db.conn = pymysql.connect('localhost', self.login, self.password, 'wykaz_p')      
+            Db.c = self.conn.cursor()
+            print('Połączono z "localhost"')
+            print(Db.c)
         except:
             print('Błąd połączenia')
             #Tutaj dodać pętlę - czy próbować jeszcze raz
     
-    def dostep(self):
-        uprawnienia = 'select username, password, uprawnienia from user where username = %s' % login
-        self.c.execute(uprawnienia)
-        result = self.c.fetchall()
+    def access(self):
+        uprawnienia = ("select username, password, uprawnienia from user where username = '%s'" % self.login)
+        print(uprawnienia)
+        Db.c.execute(uprawnienia)
+        result = Db.c.fetchall()
         for kol in result:
             username_db = kol[0]
             password_db = kol[1]
             uprawnienia_db = kol[2]
-        if haslo != password_db:
+        #Do oddzielnej metody?   
+        while self.__i <= 3 and self.password != password_db:
             print('Niepoprawny login lub hasło')
+            self.password = input('Podaj hasło (%i próba): ' % self.__i)
+            print(self.password, password_db)
+            if self.__i == 3:
+                print('Brak dostępu')
+                Db.conn.close()
+                print('Rozłączono z "localhost"')
+            self.__i += 1
+        print('Dostęp do bazy')
     
     #To do innej klasy
     def menu(self):
@@ -49,6 +61,7 @@ class Db:
 
 class Rekord(Db):
     def __init__(self):
+        pass
         '''To chyba niepotrzebne
         self.c = self.conn.cursor()'''
     #polacz() jest w klasie DB
@@ -60,6 +73,7 @@ class Rekord(Db):
         except:
             print('Błąd połączenia')  
     '''
+    #menu będzie w innej klasie
     def menu(self):
         print('--== Menu ==--')
         print('"d" - dodaj wpis\n("m" - modyfikuj wspis)\n"o" - odczyt bazy danych\n"q" - wyjście poziom wyżej')
@@ -67,21 +81,22 @@ class Rekord(Db):
             pass
     
     def odczyt(self):
-        self.polacz()
-        try:
-            sql = 'select * from uzytkownicy'
-            self.c.execute(sql)
-            result = self.c.fetchall()
-            print('%3s%15s%15s%11s' %  ('ID', 'Imię', 'Nazwisko', 'PESEL'))
-            for kol in result:
-                lp = kol[0]
-                imie = kol[1]
-                nazwisko = kol[2]
-                pesel = kol[3]
-                print('%3s%15s%15s%11s' % (lp, imie, nazwisko, pesel))                
-        except:
-            print('Błąd. Nie można odczytać') 
-        self.conn.close()
+        #self.polacz()
+        #try:
+        sql = 'select * from user'
+        Db.c.execute(sql)
+        print('zapytanie sql')
+        result = Db.c.fetchall()
+        print('%-5s%-15s%10s' % ('ID', 'User', 'uprawnienia'))
+        for kol in result:
+            lp = kol[0]
+            user = kol[1]
+            uprawnienia = kol[5]
+            print('%-5s%-15s%10s' % (lp, user, uprawnienia))                
+        #except:
+        #    print('Błąd. Nie można odczytać') 
+        Db.conn.close()
+        print('Rozłączono z "localhost"')
     
     def wpis(self):
         self.polacz()
@@ -93,3 +108,6 @@ class Rekord(Db):
             print('Błąd. Nie można dodać rekordu')
         self.conn.close()
 
+test = Db()
+#user = Rekord()
+#user.odczyt()

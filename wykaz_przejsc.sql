@@ -307,9 +307,11 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `wykaz_p`;
-INSERT INTO `wykaz_p`.`user` (`user_id`, `username`, `email`, `password`, `create_time`, `uprawnienia`) VALUES (1, 'rafal', 'rafal_slomka@poczta.onet.pl', 'abc111', '2016-08-21', 011);
-INSERT INTO `wykaz_p`.`user` (`user_id`, `username`, `email`, `password`, `create_time`, `uprawnienia`) VALUES (2, 'tester', 'aaa@b.pl', 'abc', '2016-01-01', 011);
-INSERT INTO `wykaz_p`.`user` (`user_id`, `username`, `email`, `password`, `create_time`, `uprawnienia`) VALUES (3, 'tester2', 'bbb@b.pl', 'abc', '2016-01-01', 011);
+INSERT INTO `wykaz_p`.`user` (`user_id`, `username`, `email`, `password`, `create_time`, `uprawnienia`) VALUES (1, 'rafal', 'rafal_slomka@poczta.onet.pl', 'abc111', '2016-08-21', '011');
+INSERT INTO `wykaz_p`.`user` (`user_id`, `username`, `email`, `password`, `create_time`, `uprawnienia`) VALUES (2, 'tester', 'aaa@b.pl', 'abc', '2016-01-01', '011');
+INSERT INTO `wykaz_p`.`user` (`user_id`, `username`, `email`, `password`, `create_time`, `uprawnienia`) VALUES (3, 'tester2', 'bbb@b.pl', 'abc', '2016-01-01', '011');
+
+delete from user;
 
 COMMIT;
 
@@ -646,3 +648,6 @@ sciana.nazwa_sciany as 'Ściana', miasto.nazwa_miasta as 'Miasto'
 from droga_p left join wyceny on droga_p.wycena_p = wyceny.wycena
 natural left join sciana
 natural left join miasto;
+
+select username, password, uprawnienia from user where username = 'rafal';
+update user set password = 'rafal' where username = 'rafal';

@@ -2,47 +2,77 @@
 import pymysql
 
 class Db:
-    'Login and access control'
+    """Login and access control"""
     __i = 2 
     def __init__(self):
-        self.login()
+        Db.conn = None
         self.connect()
-        self.access()
+        if Db.conn:
+            self.login()
+            self.access()                
     
     def login(self):
-        self.login = input('Podaj login: ')
-        self.password = input('Podaj hasło: ')  
+        self.user = input('Podaj login: ')
+        self.password = input('Podaj hasło: ')     
     
     def connect(self):
+        """Connects to database"""
+        #Dodać pętlę - czy próbować jeszcze raz
+        conn_login = input("Podaj login do połączenia z bazą danych: ")
+        conn_password = input("Podaj hasło do połączenia z bazą danych: ")  
         try:
-            Db.conn = pymysql.connect('localhost', self.login, self.password, 'wykaz_p')      
+            Db.conn = pymysql.connect('localhost', 'rafal', 'rafal', 'wykaz_p')
+            #Out na czas tetów Db.conn = pymysql.connect('localhost', conn_login, conn_password, 'wykaz_p')      
             Db.c = self.conn.cursor()
             print('Połączono z "localhost"')
-            print(Db.c)
         except:
-            print('Błąd połączenia')
-            #Tutaj dodać pętlę - czy próbować jeszcze raz
-    
+            print('Błąd połączenia') 
+            
     def access(self):
-        uprawnienia = ("select username, password, uprawnienia from user where username = '%s'" % self.login)
-        print(uprawnienia)
-        Db.c.execute(uprawnienia)
+        """Checks username, password and privileges, then grants user access to database"""
+        if self.user_check() == True:
+            uprawnienia = ("select username, password, uprawnienia from user where username = '%s'" % self.user)
+            Db.c.execute(uprawnienia)
+            result = Db.c.fetchall()
+            for res in result:
+                self.username_db = res[0]
+                self.password_db = res[1]
+                uprawnienia_db = res[2]
+            if self.password_check() == True:
+                print('Dostęp do bazy') 
+                #Tutaj pisz dalej!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!    
+    
+    def user_check(self):
+        """Checks if username exist in db. If not disconnects and returns False -> program ends"""
+        users = []
+        Db.c.execute("select username from user")
         result = Db.c.fetchall()
-        for kol in result:
-            username_db = kol[0]
-            password_db = kol[1]
-            uprawnienia_db = kol[2]
-        #Do oddzielnej metody?   
-        while self.__i <= 3 and self.password != password_db:
-            print('Niepoprawny login lub hasło')
-            self.password = input('Podaj hasło (%i próba): ' % self.__i)
-            print(self.password, password_db)
-            if self.__i == 3:
-                print('Brak dostępu')
-                Db.conn.close()
-                print('Rozłączono z "localhost"')
-            self.__i += 1
-        print('Dostęp do bazy')
+        for res in result:
+            users.append(res[0])
+        while self.__i > 0:           
+            if self.user not in users:
+                print('Niepoprawny login lub hasło (zostało prób: %i)' % self.__i)
+                self.login()
+            else:
+                return True
+            self.__i -= 1
+        self.pass_fail()
+        return False
+    
+    def password_check(self):
+        while (self.password != self.password_db):
+            print('Niepoprawny login lub hasło (zostało prób: %i)' % self.__i)
+            self.login()
+            if self.__i == 0:
+                self.pass_fail()
+                return False
+            self.__i -= 1
+        return True  
+    
+    def pass_fail(self):
+        print('Brak dostępu')
+        Db.conn.close()
+        print('Rozłączono z "localhost"')     
     
     #To do innej klasy
     def menu(self):
@@ -108,6 +138,9 @@ class Rekord(Db):
             print('Błąd. Nie można dodać rekordu')
         self.conn.close()
 
+
+
 test = Db()
+
 #user = Rekord()
 #user.odczyt()

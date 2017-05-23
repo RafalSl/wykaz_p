@@ -649,5 +649,6 @@ from droga_p left join wyceny on droga_p.wycena_p = wyceny.wycena
 natural left join sciana
 natural left join miasto;
 
+use wykaz_p;
 select username, password, uprawnienia from user where username = 'rafal';
 update user set password = 'rafal' where username = 'rafal';

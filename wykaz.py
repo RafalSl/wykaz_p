@@ -9,11 +9,7 @@ class Db:
         self.connect()
         if Db.conn:
             self.login()
-            self.access()                
-    
-    def login(self):
-        self.user = input('Podaj login: ')
-        self.password = input('Podaj hasło: ')     
+            self.access()       
     
     def connect(self):
         """Connects to database"""
@@ -22,35 +18,40 @@ class Db:
         conn_password = input("Podaj hasło do połączenia z bazą danych: ")  
         try:
             Db.conn = pymysql.connect('localhost', 'rafal', 'rafal', 'wykaz_p')
-            #Out na czas tetów Db.conn = pymysql.connect('localhost', conn_login, conn_password, 'wykaz_p')      
+            #Out na czas testów Db.conn = pymysql.connect('localhost', conn_login, conn_password, 'wykaz_p')      
             Db.c = self.conn.cursor()
             print('Połączono z "localhost"')
         except:
-            print('Błąd połączenia') 
+            print('Błąd połączenia')
+            
+    def sql_fetch(self, sql):
+        try:
+            Db.c.execute(sql)
+            return Db.c.fetchall()
+        except:
+            print('Nie można pobrać danych z bazy.')
+            
+    def login(self):
+        self.user = input('Podaj login: ')
+        self.password = input('Podaj hasło: ')    
             
     def access(self):
         """Checks username, password and privileges, then grants user access to database"""
         if self.user_check() == True:
-            uprawnienia = ("select username, password, uprawnienia from user where username = '%s'" % self.user)
-            Db.c.execute(uprawnienia)
-            result = Db.c.fetchall()
-            for res in result:
+            sql = ("select username, password, uprawnienia from user where username = '%s'" % self.user)
+            for res in self.sql_fetch(sql):
                 self.username_db = res[0]
                 self.password_db = res[1]
                 uprawnienia_db = res[2]
             if self.password_check() == True:
-                print('Dostęp do bazy') 
-                #Tutaj pisz dalej!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!    
+                print('Dostęp do bazy')
+                #Tutaj pisz dalej!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Wywołanie obiektów user and admin   
     
     def user_check(self):
         """Checks if username exist in db. If not disconnects and returns False -> program ends"""
-        users = []
-        Db.c.execute("select username from user")
-        result = Db.c.fetchall()
-        for res in result:
-            users.append(res[0])
-        while self.__i > 0:           
-            if self.user not in users:
+        while self.__i > 0: 
+            sql = ("select username, password, uprawnienia from user where username = '%s'" % self.user)
+            if len(self.sql_fetch(sql)) == 0:
                 print('Niepoprawny login lub hasło (zostało prób: %i)' % self.__i)
                 self.login()
             else:
@@ -60,12 +61,12 @@ class Db:
         return False
     
     def password_check(self):
-        while (self.password != self.password_db):
+        while ((self.password != self.password_db) or (self.user != self.username_db)):
             print('Niepoprawny login lub hasło (zostało prób: %i)' % self.__i)
-            self.login()
             if self.__i == 0:
                 self.pass_fail()
                 return False
+            self.login()
             self.__i -= 1
         return True  
     

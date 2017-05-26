@@ -4,12 +4,12 @@ import pymysql
 class Db:
     """Login and access control"""
     __i = 2 
-    def __init__(self):
+    def start(self):
         Db.conn = None
         self.connect()
         if Db.conn:
             self.login()
-            self.access()       
+            return self.access()       
     
     def connect(self):
         """Connects to database"""
@@ -32,8 +32,10 @@ class Db:
             print('Nie można pobrać danych z bazy.')
             
     def login(self):
-        self.user = input('Podaj login: ')
-        self.password = input('Podaj hasło: ')    
+        self.user = 'rafal'
+        self.password = 'rafal'
+        #out na czas testów self.user = input('Podaj login: ')
+        #self.password = input('Podaj hasło: ')       
             
     def access(self):
         """Checks username, password and privileges, then grants user access to database"""
@@ -45,7 +47,16 @@ class Db:
                 uprawnienia_db = res[2]
             if self.password_check() == True:
                 print('Dostęp do bazy')
-                #Tutaj pisz dalej!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!! Wywołanie obiektów user and admin   
+                if uprawnienia_db == "001":
+                    print('Witaj %s! (user)' % self.username_db)
+                    u1 = User()
+                    return u1
+                elif uprawnienia_db == "011":
+                    print('Witaj %s! (admin)' % self.username_db)
+                    u1 = Admin()
+                    return u1
+                else:
+                    self.pass_fail()
     
     def user_check(self):
         """Checks if username exist in db. If not disconnects and returns False -> program ends"""
@@ -73,44 +84,35 @@ class Db:
     def pass_fail(self):
         print('Brak dostępu')
         Db.conn.close()
-        print('Rozłączono z "localhost"')     
+        print('Rozłączono z "localhost"')   
     
-    #To do innej klasy
-    def menu(self):
+class Menu(Db):
+    def main(self):
         while True:
-            print('--== Menu ==--')
-            wybor = input('"r" - operacje na rekordach\n"q" - wyjście z programu')
+            print("""
+---== Menu ==---
+r - operacje na rekordach
+q - wyjście z programu
+            """)
+            wybor = input('')
             if wybor == 'r' or wybor == 'R':
-                rekord = Rekord()
-                rekord.menu()
+                print('wybrano r')
+                #rekord = Rekord()
+                #rekord.menu()
             elif wybor == 'q' or wybor =='Q':
+                print('wybrano q')
                 break
             else:
                 print('Błędny wybór. Spróbuj jeszcze raz')
                 continue
 
+class User(Menu):
+    pass
 
-class Rekord(Db):
-    def __init__(self):
-        pass
-        '''To chyba niepotrzebne
-        self.c = self.conn.cursor()'''
-    #polacz() jest w klasie DB
-    '''
-    def polacz(self):
-        try:
-            self.conn = pymysql.connect('localhost', 'rafal', 'rafal', 'testowa')       
-            self.c = self.conn.cursor()
-        except:
-            print('Błąd połączenia')  
-    '''
-    #menu będzie w innej klasie
-    def menu(self):
-        print('--== Menu ==--')
-        print('"d" - dodaj wpis\n("m" - modyfikuj wspis)\n"o" - odczyt bazy danych\n"q" - wyjście poziom wyżej')
-        while True:
-            pass
-    
+class Admin(User):
+    pass
+
+class Rekord(Db):    
     def odczyt(self):
         #self.polacz()
         #try:
@@ -142,6 +144,7 @@ class Rekord(Db):
 
 
 test = Db()
-
+u1 = test.start()
+u1.main()
 #user = Rekord()
 #user.odczyt()

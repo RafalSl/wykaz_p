@@ -265,6 +265,7 @@ ENGINE = InnoDB;
 -- Table `wykaz_p`.`przejscia_p`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `wykaz_p`.`przejscia_p` (
+  `przejscia_p_id` INT NOT NULL AUTO_INCREMENT,
   `wspinacz_id_p` INT NOT NULL,
   `data_pp` DATE NULL,
   `droga_p_id` INT NOT NULL,
@@ -272,6 +273,7 @@ CREATE TABLE IF NOT EXISTS `wykaz_p`.`przejscia_p` (
   `ocena_p` ENUM('1', '2', '3', '4', '5') NULL,
   `komentarz_p` TEXT NULL,
   `waga_pp` INT NULL,
+  PRIMARY KEY (`przejscia_p_id`),
   INDEX `fk_droga_has_wspinacz_wspinacz1_idx` (`wspinacz_id_p` ASC),
   INDEX `fk_droga_p_idx` (`droga_p_id` ASC),
   CONSTRAINT `fk_droga_p`
@@ -652,3 +654,4 @@ natural left join miasto;
 use wykaz_p;
 select username, password, uprawnienia from user where username = 'rafal';
 update user set password = 'rafal' where username = 'rafal';
+select username from user;

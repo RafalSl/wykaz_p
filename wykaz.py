@@ -6,8 +6,6 @@ import datetime
 
 class Db:
     """Login and access control"""
-    #global user_id
-    
     def start(self):
         Db.conn = None
         self.connect()
@@ -222,6 +220,8 @@ q : wyjście z programu
             elif chosen == 'q':
                 confirm = input("Czy na pewno wyjść z programu? (t/n)")
                 if (confirm == 't' or confirm == 'T'):
+                    Db.conn.close()
+                    print('Rozłączono z "localhost"')
                     raise SystemExit(0)
                 else:
                     continue

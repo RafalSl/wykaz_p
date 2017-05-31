@@ -312,8 +312,8 @@ USE `wykaz_p`;
 INSERT INTO `wykaz_p`.`user` (`user_id`, `username`, `email`, `password`, `create_time`, `uprawnienia`) VALUES (1, 'rafal', 'rafal_slomka@poczta.onet.pl', 'abc111', '2016-08-21', '011');
 INSERT INTO `wykaz_p`.`user` (`user_id`, `username`, `email`, `password`, `create_time`, `uprawnienia`) VALUES (2, 'tester', 'aaa@b.pl', 'abc', '2016-01-01', '011');
 INSERT INTO `wykaz_p`.`user` (`user_id`, `username`, `email`, `password`, `create_time`, `uprawnienia`) VALUES (3, 'tester2', 'bbb@b.pl', 'abc', '2016-01-01', '011');
+INSERT INTO `wykaz_p`.`user` (`username`, `email`, `password`, `create_time`, `uprawnienia`) VALUES ('tester3', 'bb@b.pl', 'abc', '2016-01-01', '001');
 
-delete from user;
 
 COMMIT;
 
@@ -325,7 +325,7 @@ START TRANSACTION;
 USE `wykaz_p`;
 INSERT INTO `wykaz_p`.`wspinacz` (`wspinacz_id`, `imie`, `nazwisko`, `ksywa`, `data_ur`, `plec`, `kraj`, `miasto`, `wzrost`, `waga`, `od_kiedy`) VALUES (1, 'Rafał', 'Słomka', 'Rafał', '1984-08-21', 'M', 'Polska', 'Warszawa', 188, 75, '2009-05-01');
 INSERT INTO `wykaz_p`.`wspinacz` (`wspinacz_id`, `imie`, `nazwisko`, `ksywa`, `data_ur`, `plec`, `kraj`, `miasto`, `wzrost`, `waga`, `od_kiedy`) VALUES (2, 'Testerka', 'Nazwisko_t', 'Testereczka', '1990-07-22', 'K', 'Polska', 'Kraków', 168, 66, '2008-01-01');
-INSERT INTO `wykaz_p`.`wspinacz` (`wspinacz_id`, `imie`, `nazwisko`, `ksywa`, `data_ur`, `plec`, `kraj`, `miasto`, `wzrost`, `waga`, `od_kiedy`) VALUES (3, 'Tester', 'Nazwisko_t', 'Testerek', '1980-12-12', 'M', 'Niemcy', 'Berlin', 175, 71, '2016-01-01');
+INSERT INTO `wykaz_p`.`wspinacz` (`wspinacz_id`, `imie`, `nazwisko`, `ksywa`, `data_ur`, `plec`, `kraj`, `miasto`, `wzrost`, `waga`, `od_kiedy`) VALUES (3, 'Jan', 'Kowalski', 'Testerek', '1980-12-12', 'M', 'Niemcy', 'Berlin', 175, 80, '2016-01-01');
 
 COMMIT;
 
@@ -415,7 +415,6 @@ INSERT INTO `wykaz_p`.`droga_p` (`droga_p_id`, `sciana_id`, `nazwa_drogi_p`, `wy
 COMMIT;
 
 USE `wykaz_p`;
-drop trigger `wykaz_p`.`przejscia_p_AFTER_INSERT`;
 
 DELIMITER $$
 USE `wykaz_p`$$
@@ -499,8 +498,6 @@ INSERT INTO `wykaz_p`.`przejscia_p` (`wspinacz_id_p`, `data_pp`, `droga_p_id`, `
 INSERT INTO `wykaz_p`.`przejscia_p` (`wspinacz_id_p`, `data_pp`, `droga_p_id`, `styl`, `ocena_p`, `komentarz_p`, `waga_pp`) VALUES (3, '2017-04-09', 5, 'OS', '2', null, 70);
 INSERT INTO `wykaz_p`.`przejscia_p` (`wspinacz_id_p`, `data_pp`, `droga_p_id`, `styl`, `ocena_p`, `komentarz_p`, `waga_pp`) VALUES (3, '2017-04-09', 12, 'OS', '2', null, 70);
 
-update wspinacz set nazwisko = 'Kowalski' where wspinacz_id = 3;
-update wspinacz set imie = 'Jan' where wspinacz_id = 3;
 
 #Wszystkie przejścia wszystkich wspinaczy posortowane po dacie - wyświetlanie wybranych kolumn z różnych tabel
 select przejscia_p.data_pp as 'Data przejścia', droga_p.nazwa_drogi_p as 'Droga', droga_p.wycena_p as 'Wycena', sciana.nazwa_sciany as 'Ściana', kraj.nazwa_kraju as 'Kraj' from przejscia_p 

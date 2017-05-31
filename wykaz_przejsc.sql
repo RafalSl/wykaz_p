@@ -265,6 +265,7 @@ ENGINE = InnoDB;
 -- Table `wykaz_p`.`przejscia_p`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `wykaz_p`.`przejscia_p` (
+  `przejscia_p_id` INT NOT NULL AUTO_INCREMENT,
   `wspinacz_id_p` INT NOT NULL,
   `data_pp` DATE NULL,
   `droga_p_id` INT NOT NULL,
@@ -272,6 +273,7 @@ CREATE TABLE IF NOT EXISTS `wykaz_p`.`przejscia_p` (
   `ocena_p` ENUM('1', '2', '3', '4', '5') NULL,
   `komentarz_p` TEXT NULL,
   `waga_pp` INT NULL,
+  PRIMARY KEY (`przejscia_p_id`),
   INDEX `fk_droga_has_wspinacz_wspinacz1_idx` (`wspinacz_id_p` ASC),
   INDEX `fk_droga_p_idx` (`droga_p_id` ASC),
   CONSTRAINT `fk_droga_p`
@@ -307,9 +309,11 @@ SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `wykaz_p`;
-INSERT INTO `wykaz_p`.`user` (`user_id`, `username`, `email`, `password`, `create_time`, `uprawnienia`) VALUES (1, 'rafal', 'rafal@rafal.pl', 'abc111', '2016-08-21', 011);
-INSERT INTO `wykaz_p`.`user` (`user_id`, `username`, `email`, `password`, `create_time`, `uprawnienia`) VALUES (2, 'tester', 'aaa@b.pl', 'abc', '2016-01-01', 011);
-INSERT INTO `wykaz_p`.`user` (`user_id`, `username`, `email`, `password`, `create_time`, `uprawnienia`) VALUES (3, 'tester2', 'bbb@b.pl', 'abc', '2016-01-01', 011);
+INSERT INTO `wykaz_p`.`user` (`user_id`, `username`, `email`, `password`, `create_time`, `uprawnienia`) VALUES (1, 'rafal', 'rafal_slomka@poczta.onet.pl', 'abc111', '2016-08-21', '011');
+INSERT INTO `wykaz_p`.`user` (`user_id`, `username`, `email`, `password`, `create_time`, `uprawnienia`) VALUES (2, 'tester', 'aaa@b.pl', 'abc', '2016-01-01', '011');
+INSERT INTO `wykaz_p`.`user` (`user_id`, `username`, `email`, `password`, `create_time`, `uprawnienia`) VALUES (3, 'tester2', 'bbb@b.pl', 'abc', '2016-01-01', '011');
+INSERT INTO `wykaz_p`.`user` (`username`, `email`, `password`, `create_time`, `uprawnienia`) VALUES ('tester3', 'bb@b.pl', 'abc', '2016-01-01', '001');
+
 
 COMMIT;
 
@@ -319,9 +323,9 @@ COMMIT;
 -- -----------------------------------------------------
 START TRANSACTION;
 USE `wykaz_p`;
-INSERT INTO `wykaz_p`.`wspinacz` (`wspinacz_id`, `imie`, `nazwisko`, `ksywa`, `data_ur`, `plec`, `kraj`, `miasto`, `wzrost`, `waga`, `od_kiedy`) VALUES (1, 'Rafał', 'Rafał', 'Rafał', '1984-08-21', 'M', 'Polska', 'Warszawa', 188, 75, '2009-05-01');
+INSERT INTO `wykaz_p`.`wspinacz` (`wspinacz_id`, `imie`, `nazwisko`, `ksywa`, `data_ur`, `plec`, `kraj`, `miasto`, `wzrost`, `waga`, `od_kiedy`) VALUES (1, 'Rafał', 'Słomka', 'Rafał', '1984-08-21', 'M', 'Polska', 'Warszawa', 188, 75, '2009-05-01');
 INSERT INTO `wykaz_p`.`wspinacz` (`wspinacz_id`, `imie`, `nazwisko`, `ksywa`, `data_ur`, `plec`, `kraj`, `miasto`, `wzrost`, `waga`, `od_kiedy`) VALUES (2, 'Testerka', 'Nazwisko_t', 'Testereczka', '1990-07-22', 'K', 'Polska', 'Kraków', 168, 66, '2008-01-01');
-INSERT INTO `wykaz_p`.`wspinacz` (`wspinacz_id`, `imie`, `nazwisko`, `ksywa`, `data_ur`, `plec`, `kraj`, `miasto`, `wzrost`, `waga`, `od_kiedy`) VALUES (3, 'Tester', 'Nazwisko_t', 'Testerek', '1980-12-12', 'M', 'Niemcy', 'Berlin', 175, 71, '2016-01-01');
+INSERT INTO `wykaz_p`.`wspinacz` (`wspinacz_id`, `imie`, `nazwisko`, `ksywa`, `data_ur`, `plec`, `kraj`, `miasto`, `wzrost`, `waga`, `od_kiedy`) VALUES (3, 'Jan', 'Kowalski', 'Testerek', '1980-12-12', 'M', 'Niemcy', 'Berlin', 175, 80, '2016-01-01');
 
 COMMIT;
 
@@ -411,7 +415,6 @@ INSERT INTO `wykaz_p`.`droga_p` (`droga_p_id`, `sciana_id`, `nazwa_drogi_p`, `wy
 COMMIT;
 
 USE `wykaz_p`;
-drop trigger `wykaz_p`.`przejscia_p_AFTER_INSERT`;
 
 DELIMITER $$
 USE `wykaz_p`$$
@@ -495,8 +498,6 @@ INSERT INTO `wykaz_p`.`przejscia_p` (`wspinacz_id_p`, `data_pp`, `droga_p_id`, `
 INSERT INTO `wykaz_p`.`przejscia_p` (`wspinacz_id_p`, `data_pp`, `droga_p_id`, `styl`, `ocena_p`, `komentarz_p`, `waga_pp`) VALUES (3, '2017-04-09', 5, 'OS', '2', null, 70);
 INSERT INTO `wykaz_p`.`przejscia_p` (`wspinacz_id_p`, `data_pp`, `droga_p_id`, `styl`, `ocena_p`, `komentarz_p`, `waga_pp`) VALUES (3, '2017-04-09', 12, 'OS', '2', null, 70);
 
-update wspinacz set nazwisko = 'Kowalski' where wspinacz_id = 3;
-update wspinacz set imie = 'Jan' where wspinacz_id = 3;
 
 #Wszystkie przejścia wszystkich wspinaczy posortowane po dacie - wyświetlanie wybranych kolumn z różnych tabel
 select przejscia_p.data_pp as 'Data przejścia', droga_p.nazwa_drogi_p as 'Droga', droga_p.wycena_p as 'Wycena', sciana.nazwa_sciany as 'Ściana', kraj.nazwa_kraju as 'Kraj' from przejscia_p 
@@ -549,14 +550,14 @@ left join przejscia_p using (droga_p_id)
 left join wspinacz on przejscia_p.wspinacz_id_p = wspinacz.wspinacz_id
 group by przejscia_p.wspinacz_id_p;
 #To nie działa
-select wspinacz.imie, wspinacz.nazwisko, droga_p.nazwa_drogi_p as 'Droga', max(droga_p.wycena_p) as 'Wycena', sciana.nazwa_sciany as 'Ściana', kraj.nazwa_kraju as 'Kraj' 
+select wspinacz.wspinacz_id, wspinacz.imie, wspinacz.nazwisko, droga_p.nazwa_drogi_p as 'Droga', max(droga_p.wycena_p) as 'Wycena', sciana.nazwa_sciany as 'Ściana', kraj.nazwa_kraju as 'Kraj' 
 from przejscia_p
 left join wspinacz on przejscia_p.wspinacz_id_p = wspinacz.wspinacz_id
-natural left join droga_p
+left join droga_p on droga_p.droga_p_id = przejscia_p.droga_p_id
 natural left join sciana
 natural left join miasto
 natural left join kraj
-group by przejscia_p.wspinacz_id_p;
+group by wspinacz.wspinacz_id;
 
 #Średnia trudność dróg, jakie przeszedł dany wspinacz
 select wspinacz.imie, wspinacz.nazwisko, round(avg(droga_p.wycena_p)) as 'Średnia wycena' from droga_p 
@@ -646,3 +647,8 @@ sciana.nazwa_sciany as 'Ściana', miasto.nazwa_miasta as 'Miasto'
 from droga_p left join wyceny on droga_p.wycena_p = wyceny.wycena
 natural left join sciana
 natural left join miasto;
+
+use wykaz_p;
+select username, password, uprawnienia from user where username = 'rafal';
+update user set password = 'rafal' where username = 'rafal';
+select username from user;

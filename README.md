@@ -3,6 +3,4 @@
 
 Wykaz przejsc wspinaczkowych
 
-Baza przejść wspinaczkowych zaprojektowana w Workbenchu (MySQL)
-i
-Prosty program w trybie tekstowym do obsługi bazy danych napisany w Pythonie.
+Baza przejść wspinaczkowych zaprojektowana w Workbenchu (MySQL) na bootcampie programistycznym.

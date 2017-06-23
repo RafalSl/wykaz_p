@@ -10,6 +10,7 @@ It has three branches:
 2. Outdoor routes
 
   Tables:
+  
     kraj - country
     
     rejon - area

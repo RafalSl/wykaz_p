@@ -8,6 +8,7 @@ It has three branches:
 1. Users, login and personal info (tables users and wspinacz)
 2. Outdoor routes 
   Tables:
+  
     kraj - country
     rejon - area
     dolina - valley/sector
